@@ -17,7 +17,7 @@ Made following folders
         --blur
         --sharp
 ```
-Copy original images of train,test,valid to sharp folder. To fill the images in blur folder you can use [this code](./util/blur_image.py). now we are done with data preparation.
+Copy original images of train,test,valid to sharp folder. To fill the images in blur folder you can use [this code](./util/blur_image.py). now we are done with data preparation. Dataset which i prepared can be [found here](https://drive.google.com/file/d/1Mk99lU3zJgBkBpHTl0PigJ3UiSX4yyKB/view?usp=sharing)
 
 **Installation**
 
@@ -35,24 +35,24 @@ pretrained weights can be [found here](https://drive.google.com/file/d/1M0zk2udF
 
 **Gallery**
 
-</div>
-<img src="./assets/13.jpg" alt="Number plate" width="250" height="250">
-<img src="./assets/13_deblur.jpg" alt="Number plate" width="250" height="250">
-<div>
+<p float="left">
+<img src="./assets/13.jpg" alt="Number plate" width="250" height="250"/>
+<img src="./assets/13_deblur.jpg" alt="Number plate" width="250" height="250"/>
+</p>
 
-</div>
+<p float="left">
 <img src="./assets/100.jpg" alt="Number plate" width="250" height="250">
 <img src="./assets/100_deblur.jpg" alt="Number plate" width="250" height="250">
-<div>
+</p>
 
-</div>
+<p float="left">
 <img src="./assets/107.jpg" alt="Number plate" width="250" height="250">
 <img src="./assets/107_deblur.jpg" alt="Number plate" width="250" height="250">
-<div>
-
+</p>
 
 **Colab Notebook**
 
+[Notebook](https://colab.research.google.com/drive/1yHv9dZt_GYQW69RSbShhwR1TChauF9BL?usp=sharing)
 
 **Credits**
 
