@@ -18,6 +18,8 @@ from models.models import get_model
 from models.networks import get_nets
 from schedulers import LinearDecay, WarmRestart
 from fire import Fire
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
 
 cv2.setNumThreads(0)
 

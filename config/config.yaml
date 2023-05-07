@@ -1,4 +1,3 @@
-%%writefile config/config.yaml
 ---
 project: deblur_gan
 experiment_desc: fpn

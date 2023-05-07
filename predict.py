@@ -11,15 +11,22 @@ from tqdm import tqdm
 
 from aug import get_normalize
 from models.networks import get_generator
-
+import argparse
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
 
 class Predictor:
-    def __init__(self, weights_path: str, model_name: str = ''):
+    def __init__(self, weights_path: str, model_name: str = '', cpu: bool = True):
         with open('config/config.yaml',encoding='utf-8') as cfg:
             config = yaml.load(cfg, Loader=yaml.FullLoader)
         model = get_generator(model_name or config['model'])
-        model.load_state_dict(torch.load(weights_path)['model'])
-        self.model = model.cuda()
+        if cpu:
+            model.load_state_dict(torch.load(weights_path, map_location=torch.device('cpu'))['model'])
+            self.model = model
+        else:
+            model.load_state_dict(torch.load(weights_path)['model'])
+            self.model = model.cuda()
+        
         self.model.train(True)
         # GAN inference should be in train mode to use actual stats in norm layers,
         # it's not a bug
@@ -62,7 +69,7 @@ class Predictor:
     def __call__(self, img: np.ndarray, mask: Optional[np.ndarray], ignore_mask=True) -> np.ndarray:
         (img, mask), h, w = self._preprocess(img, mask)
         with torch.no_grad():
-            inputs = [img.cuda()]
+            inputs = [img]
             if not ignore_mask:
                 inputs += [mask]
             pred = self.model(*inputs)
@@ -101,7 +108,7 @@ def main(img_pattern: str,
     masks = sorted_glob(mask_pattern) if mask_pattern is not None else [None for _ in imgs]
     pairs = zip(imgs, masks)
     names = sorted([os.path.basename(x) for x in glob(img_pattern)])
-    predictor = Predictor(weights_path=weights_path)
+    predictor = Predictor(weights_path=weights_path, cpu=True)
 
     os.makedirs(out_dir, exist_ok=True)
     if not video:
@@ -124,9 +131,9 @@ def main(img_pattern: str,
 # def getfiles():
 #     filenames = os.listdir(r'.\dataset1\blur')
 #     print(filenames)
-def get_files():
+def get_files(dirpath):
     list=[]
-    for filepath,dirnames,filenames in os.walk(r'/content/Licenseplate_blur_clear_dataset/test/blur'):
+    for filepath,dirnames,filenames in os.walk(dirpath):
         for filename in filenames:
             list.append(os.path.join(filepath,filename))
     return list
@@ -137,8 +144,16 @@ def get_files():
 
 if __name__ == '__main__':
     #  Fire(main)
+    parser = argparse.ArgumentParser(description='Example argument parser')
 
-    img_path=get_files()
+    # Add arguments to the parser
+    parser.add_argument('-i', '--inputpath', help='Directory Path to input files')
+    parser.add_argument('-o', '--output', help='Path to output file')
+    parser.add_argument('-m', '--modelpath', help='deblur ganv2 model path')
+
+    # Parse the command-line arguments
+    args = parser.parse_args()
+    img_path=get_files(args.inputpath)
     for i in img_path:
-        main(i)
+        main(i,weights_path=args.modelpath, out_dir=args.output)
     # main('test_img/tt.mp4')
